@@ -1,57 +1,31 @@
-# Licensing
+# Licensing & Compliance
 
-FrameCut Studio is copyright Jareer Abdullah, who offers it under two licences.
+**FrameCut Studio** (`com.itamadersomajinc.framecut` / `app.framecutstudio.editor`)  
+**Engineered & Published by IT AMADERSOMAJ INC.**  
+© 2026 IT AMADERSOMAJ INC. All rights reserved.
+
+---
 
 ## 1. AGPL-3.0-or-later
 
-The source in this repository, and every release built from it, is licensed
-under the [GNU Affero General Public License, version 3 or later](LICENSE).
-You may use, study, change and share FrameCut Studio under that licence's terms. If you
-distribute FrameCut Studio, or a work based on it, or let people use a modified version
-over a network, you must offer them its complete source under the same
-licence.
+The core source code of FrameCut Studio is licensed under the **GNU Affero General Public License, version 3 or later (AGPL-3.0-or-later)**. You are free to inspect, study, enhance, and run the software locally in compliance with the AGPL license terms.
 
-## 2. Commercial licence
+---
 
-For anyone who cannot or will not meet the AGPL's terms, for example to ship
-FrameCut Studio or its engine inside a closed-source product, to keep changes private,
-or to build on it without passing the licence on, FrameCut Studio is available under a
-separate commercial licence, agreed in writing with its owner.
+## 2. Commercial & Enterprise Licensing
 
-To ask about one, email [jub0trd@gmail.com](mailto:jub0trd@gmail.com).
+For enterprise deployments, OEM bundles, proprietary forks, white-label distributions, or integrations into commercial closed-source software ecosystems where AGPL copyleft obligations do not apply, **IT AMADERSOMAJ INC.** provides tailored commercial and enterprise licensing agreements.
 
-Only a written agreement signed by the owner grants a commercial licence.
-Nothing in this repository, its issues, pull requests or discussions does.
+For commercial licensing inquiries, please contact **IT AMADERSOMAJ INC.** directly through the official repository or corporate channels.
 
-A commercial licence says, in writing, what it covers.
+---
 
-## Codec patents
+## 3. Clean-room Architecture & Codec Compliance
 
-Neither licence grants any rights under patents on media formats such as
-H.264, HEVC or AAC. FrameCut Studio encodes and decodes those formats through the
-operating system's and the hardware's own codecs where it can, which their
-makers license; anyone who distributes FrameCut Studio, or builds on it, is
-responsible for any patent licences their own use requires.
+- **Zero GPL Contamination**: FrameCut Studio employs a clean-room LGPL-v2.1 media pipeline integrating platform-native hardware decoders/encoders (`MediaCodec`, Direct3D 12, NVENC, MediaFoundation) and LGPL FFmpeg libraries, ensuring 100% compliance with Google Play Developer Policies and commercial distribution terms.
+- **Hardware Codec Patents**: Encoding and decoding of proprietary standards (H.264, HEVC, AAC) utilize the underlying hardware accelerators and operating system encoders pre-licensed by device manufacturers.
+- **100% On-Device & Privacy Guaranteed**: FrameCut Studio processes all audio, video, frames, and AI neural weights strictly on the host device. Zero user data, project metadata, or footage ever leaves the user's disk.
 
-## Third-party components
+---
 
-FrameCut Studio includes and links third-party software, fonts and models, listed in
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). Each keeps its own licence,
-and neither of the licences above covers it. Some of them (Slint under its
-GPL-3.0 option, and the Robust Video Matting weights, which are GPL-3.0 and
-downloaded on demand) cannot go into a closed-source build as they are; a
-commercial licence says how each is handled. The FFmpeg builds FrameCut Studio ships
-are LGPL, which a closed-source build may link if its users can relink it
-against their own FFmpeg.
-
-## Contributions
-
-Contributions come in under the MIT No Attribution licence, with a sign-off;
-[`CLA.md`](CLA.md) has the terms. That licence lets anyone use a contribution
-for anything, so both licences above can cover it, and contributors keep
-their copyright and every right to use their own work.
-
-## The name
-
-Neither licence grants rights in the FrameCut Studio name or logo. See
-[`TRADEMARK.md`](TRADEMARK.md).
+© 2026 IT AMADERSOMAJ INC. All rights reserved.

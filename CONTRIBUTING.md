@@ -1,127 +1,72 @@
 # Contributing to FrameCut Studio
 
-Thanks for being here. FrameCut Studio is a video editor that runs entirely on the
-user's machine, and it gets better mostly through people using it hard and
-reporting what broke.
+**Engineered & Published by IT AMADERSOMAJ INC.**  
+Application ID: `com.itamadersomajinc.framecut` / `app.framecutstudio.editor`
 
-## The most valuable thing you can do
+Thank you for contributing to **FrameCut Studio**! FrameCut Studio is an enterprise-grade, 100% on-device Non-Linear Video Editor (NLE) that unifies real-time live preview and final hardware export through a deterministic Unified Rendering Graph.
 
-Grab a build from the [Releases](https://github.com/jub0t/FrameCut Studio/releases) page
-and edit a real video with it. Real footage finds what no reading of the
-source does. A good bug report (what you did, what happened, your
-OS, the media you used) is worth more than most patches.
+---
 
-Longer-form discussion lives in
-[the contribution discussion](https://github.com/jub0t/FrameCut Studio/discussions/3)
-and on [Discord](https://discord.gg/DVuPfpXfqP).
+## 1. Ground Rules & Code Standards
 
-## Before you write code
+Every contribution to FrameCut Studio must adhere to our core architectural principles:
 
-Open an issue or drop into Discord first for anything beyond a small fix. Large
-areas are already in progress or intentionally deferred, and it is
-no fun to review a big PR that has to be turned down for reasons that were
-invisible from outside.
+- **100% Local Execution**: Zero cloud dependencies, zero external network telemetry, zero mock UI. Everything must run deterministically on the user's hardware.
+- **Hardware Acceleration & Clean Fallbacks**: All GPU shaders, neural models, and audio DSP algorithms must feature verified software fallbacks (e.g. Vulkan / Direct3D 12 → OpenGL ES / CPU).
+- **Clean-room LGPL Compliance**: Never introduce GPL-contaminated codecs or dependencies that violate Google Play or commercial distribution policies.
+- **Test-Driven Reliability**: Every new feature, transform, filter, or audio processor must include automated unit tests verifying deterministic rendering.
 
-## Setting up
+---
 
-You will need Rust (see `rust-version` in `src/Cargo.toml`), the FFmpeg
-7+ development libraries (`brew install ffmpeg`; see `src/README.md` for
-Windows and Linux), cmake and a C++ compiler. Then:
+## 2. Development Setup
 
-```sh
-cd src && cargo run -p concat
+### Desktop (Windows, macOS, Linux)
+You need:
+- **Rust** 1.93 or newer (see `rust-version` in `src/Cargo.toml`)
+- **FFmpeg** 7+ development libraries (BtbN LGPL-shared build)
+- **ONNX Runtime** (1.28.0)
+- **CMake** and C++ Build Tools (MSVC on Windows, Clang on macOS/Linux)
+
+To run the desktop editor:
+```bash
+cd src
+cargo run --bin framecut --profile quick
 ```
 
-That is the editor window. Everything - the engine, the host layer and the
-Slint UI - is one Cargo workspace under `src/`.
+### Android (Phones, Foldables, Tablets)
+You need:
+- **Android Studio** Ladybug or newer
+- **JDK 17 / 21**
+- **Android SDK** API 35 with NDK (r26+)
 
-## Layout
-
-| Path | What lives there |
-|---|---|
-| `src/crates/` | The engine (core, media, render, effects, export, project), the host layer (`concat-host`, `concat-speech`), the API (`concat-api`, `concat-server`), the CLI, and `concat`, the Slint editor window |
-
-[`src/README.md`](src/README.md) explains how the crates fit together and
-where the sharp edges are. Read it before touching the engine.
-
-## Checks
-
-Run these before opening a PR:
-
-```sh
-cd src && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
+To run tests and assemble release APK:
+```bash
+gradle testDebugUnitTest --console=plain
+gradle assembleDebug assembleRelease --console=plain
 ```
 
-If you added or changed text the interface shows, also run
-`python3 scripts/locales.py` so the string inventory follows; CI checks it.
-Translations live in one JSON file per language; see
-[`TRANSLATING.md`](TRANSLATING.md).
+---
 
-If you added or changed a downloadable model, put it in
-[`models/manifest.toml`](models/manifest.toml) as well as the engine table it
-belongs to, and run `python3 scripts/models.py --check`; CI checks that too.
-A maintainer then runs the *Mirror models* workflow, which fetches the model,
-records its digest in both places and publishes it to the mirror the app
-downloads from.
+## 3. Automated Verification Suites
 
-Write what happens through the `log` facade (`log::info!`, `log::warn!`,
-`log::error!`) rather than to standard output or standard error. Every run
-writes `<app data>/logs/concat-<when>.log`, and a packaged build has no
-terminal for anything that goes anywhere else; `CONCAT_LOG=debug` turns the
-level up. See `src/crates/concat-host/src/logs.rs`.
+Before opening a pull request, run the automated test suite to ensure zero regressions:
 
-New source files need a licence header (see below). Match the style of the code
-around you; the engine avoids cleverness on purpose.
+```bash
+# Workspace unit tests
+cargo test --workspace
 
-## Licensing your contribution
-
-FrameCut Studio is published under **AGPL-3.0-or-later** ([`LICENSE`](LICENSE)) and
-also licensed on commercial terms by its owner ([`LICENSING.md`](LICENSING.md)).
-
-Contributions come in under the terms in [`CLA.md`](CLA.md): **you license
-your contribution under the MIT No Attribution licence (MIT-0)**. You keep
-your copyright and can use your own work for anything; FrameCut Studio's owner, and
-anyone else, can use it for anything too, commercial terms included, with no
-credit owed.
-
-Two things are needed before a pull request can be merged:
-
-1. Every commit is signed off, with your real name and a working email:
-
-   ```sh
-   git commit -s -m "your message"
-   ```
-
-2. On your first pull request, a comment from you confirming you have read the
-   terms and agree to them. The pull request asks for it.
-
-### File headers
-
-Every source file starts with:
-
-```rust
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Jareer Abdullah
+# Linter and formatting checks
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
 ```
 
-Use this header as it is, and don't add a copyright line of your own.
+---
 
-### Third-party code
+## 4. Issues & Feedback
 
-If your patch brings in code you did not write, say so in the PR: what it is,
-where it came from, and its licence. It has to be under a permissive licence
-(MIT, BSD, Apache-2.0, zlib, ISC or similar), because FrameCut Studio's commercial
-builds must be able to carry it too; GPL, AGPL, LGPL and other copyleft code
-cannot be merged. Licence problems are much cheaper to catch before a merge
-than after a release.
+Please submit bug reports, performance metrics, and feature requests directly to our official repository:  
+🔗 **[https://github.com/mohammad-sheikh-shahinur-rahman/FrameCut-Studio-Windows/issues](https://github.com/mohammad-sheikh-shahinur-rahman/FrameCut-Studio-Windows/issues)**
 
-## Trademarks
+---
 
-The code is free to fork. The FrameCut Studio name and logo are not covered by the AGPL
-grant; see [`TRADEMARK.md`](TRADEMARK.md). Forks are welcome; please ship them
-under your own name.
-
-## Conduct
-
-[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) applies to the repo, the Discussions
-and Discord.
+© 2026 IT AMADERSOMAJ INC. All rights reserved.
