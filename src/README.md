@@ -1,163 +1,66 @@
-# FrameCut Studio Engine
+# FrameCut Studio Native Media Engine
 
-The video engine behind FrameCut Studio. Rust, no GC, no hidden control flow.
+**Engineered & Published by IT AMADERSOMAJ INC.**  
+Application ID: `com.itamadersomajinc.framecut` / `app.framecutstudio.editor`  
+© 2026 IT AMADERSOMAJ INC. All rights reserved.
 
-## Layout
+The native 10-engine media architecture behind **FrameCut Studio**: 100% local Rust & native platform execution, zero GC, deterministic Unified Rendering Graph.
 
-| Crate | What it is | Dependencies |
-|---|---|---|
-| `concat-core` | Time, arena, frames, timeline model. The vocabulary every other crate speaks. | **none** (std only) |
-| `concat-media` | Getting pixels and samples in and out of files. Links FFmpeg (libav*), and is the only crate that knows it exists. | `concat-core`, ffmpeg-the-third |
-| `concat-project` | The edit itself: document model, operations as commands, undo, concat.json IO. | serde, serde_json |
-| `concat-render` | Turning a timeline plus a timestamp into one finished frame. | `concat-core`, wgpu (optional) |
-| `concat-effects` | Effect packages: manifests, WGSL shaders for pictures and FFmpeg chain templates for sound, the catalogue. Each built-in effect is a folder under `packages/`. | `concat-project`, serde, toml |
-| `concat-export` | Timeline to file: flatten, the frame-by-frame render loop, the paused monitor's true frame. | `concat-core`, `concat-media`, `concat-render`, `concat-project`, `concat-effects` |
-| `concat-api` | The Concat API: JSON requests in, responses and events out. Projects, edits, media, the catalogue, templates, exports as jobs, frames. | `concat-host`, `concat-export`, `concat-effects`, `concat-project` |
-| `concat-server` | The API on a socket: JSON-RPC lines over TCP or a Unix socket, and gRPC behind the `grpc` feature. One dispatcher, many callers. | `concat-api`; tonic and tokio with `grpc` |
-| `concat-cli` | A binary to drive the above: `probe`, `render`, `api` (the API over stdin and stdout) and `serve` (the API on a socket). | `concat-server`, `concat-api`, the engine crates |
-| `concat-host` | What the window needs that is not the edit: sessions, project folders, previews, playback, templates, job slots. | `concat-media`, `concat-project`, `concat-export`, cpal |
-| `concat-speech` | Transcription (whisper.cpp, in-process) and text to speech (Kokoro via sherpa-onnx). | `concat-host`, `concat-media`, whisper-rs, sherpa-onnx |
-| `concat` | The editor window: every pane, dialog and primitive, in Slint. The app a user launches. | slint, `concat-host`, `concat-speech` |
-| `concat-android` | The Android activity: the entry point that hosts the window on a phone. | `concat`, slint |
+---
 
-The dependency arrows point one way:
+## 10-Engine Architecture & Module Mapping
+
+| Engine # | Engine Domain | Workspace Crates | Implementation Details |
+|---|---|---|---|
+| **1** | **FFmpeg Native Media Pipeline** | `concat-media` | Probing (`ffprobe`), software/hardware codec decoding & encoding (`libavcodec`), format demuxing (`libavformat`), pixel format conversion (`libswscale`), PCM audio resampling (`libswresample`). |
+| **2** | **Unified Render Graph & Compositor** | `concat-render`, `concat-core` | Frame-accurate multi-track timeline preview, `RenderGraph` directed acyclic graph compilation, spatial matrix transforms, track compositing, and layer sequencing. |
+| **3** | **GPU Rendering & Shaders (Direct3D 12 / Vulkan / GLES)** | `concat-render`, `concat-effects` | Native Direct3D 12 and Vulkan rendering via WGPU 30. Single-pass WGSL/GLSL shaders for color grading, 8-Band HSL Secondary, 5-Point Tone Curves, Chroma Key, Luma Matte & transitions. |
+| **4** | **3D Typography & Volumetric Titles** | `concat-text`, `concat/text-presets` | Volumetric text extrusion (0..20px), 3D perspective pitch (`tiltX`) & yaw (`tiltY`), directional Lambertian bevel shading, and 11 bundled Google Fonts. |
+| **5** | **Low-Latency Audio DSP & Mixer** | `concat-speech`, `concat-core` | Real-time 5-Band Parametric EQ (60Hz–14kHz), -0.3 dBFS brickwall peak limiter, 17 studio audio effects, voiceover ducking, and lock-free PCM-16 ring buffers. |
+| **6** | **MediaPipe / AI Auto-Cutout & Vision** | `concat-vision` | 100% on-device neural person segmentation (Auto-Cutout), bilateral alpha feathering, DSLR bokeh blur, and planar motion tracking. |
+| **7** | **ONNX Neural Video Engine (1.28.0)** | `concat-vision` | Real-time Opset-15 / IR-v8 neural video enhancement, spatial noise reduction, and 2× AI super-resolution upscaling via bundled ONNX Runtime. |
+| **8** | **High-Speed Native Media APIs** | `concat-media`, `concat-host` | High-speed PCM waveform extraction, beat-marker detection, and hardware intra-frame video reverse transcoding. |
+| **9** | **Local Database & Atomic Manifest Ledger** | `concat-host`, `concat-project` | Structured project metadata (`framecut.json`), atomic state ledger, and 80-step deep undo/redo stack. |
+| **10** | **Deferred Task Engine & Master Export** | `concat-export` | Multi-format master export engine: MP4 (H.264/HEVC up to 4K 60fps), Batch 3-Aspect Export (9:16 + 1:1 + 16:9), Animated GIF, Audio-Only M4A, PNG still covers, and hardware proxy workflows. |
+
+---
+
+## Workspace Layout & Dependency Hierarchy
 
 ```
-concat -> concat-speech -> concat-host -> {export, project, media} -> core
-                                       -> render -> core
-                                          export -> effects -> project
-concat-cli -> concat-server -> concat-api -> concat-host
+concat (Desktop Editor UI) -> concat-speech -> concat-host -> {concat-export, concat-project, concat-media} -> concat-core
+                                                           -> concat-render -> concat-core
+                                                           -> concat-export -> concat-effects -> concat-project
+                                                           -> concat-vision (ONNX Runtime 1.28.0)
 ```
 
-If you ever find yourself wanting `core` to depend on `media`, something has
-been put in the wrong crate.
+- `concat-core`: Timeline models, time arithmetic, geometry, blend modes, curves. Standard library only.
+- `concat-media`: Direct hardware & FFmpeg media I/O.
+- `concat-project`: The project document, 80-step undo/redo stack, timeline tracks, and command execution.
+- `concat-render`: WGPU / Direct3D 12 video compositor.
+- `concat-effects`: The catalog of 26 film filters, 22 GPU effects, and 14 transitions.
+- `concat-text`: Vector text shaping, multi-language font typography, and subtitle (.SRT) parser/serializer.
+- `concat-vision`: ONNX neural inference and auto-cutout segmentation.
+- `concat-speech`: Whisper speech-to-text, audio DSP effects, and parametric equalization.
+- `concat-export`: Multi-threaded frame-by-frame master export and proxy generation pipeline.
+- `concat-host`: System integration, sessions, GPU probing, and audio devices.
+- `concat`: The complete cross-platform Slint GUI editor.
 
-`concat` is the app. It opens project folders through `concat-host`, reads
-the engine's project to draw the bin and the lanes, and writes every edit as
-a `concat-project` command.
+---
 
-## Build and run
+## Build Commands
 
 ```sh
-cargo build
-cargo test
-cargo run -p concat-cli -- probe some-video.mp4
-cargo run -p concat-cli -- render some-video.mp4 out.mp4 --frames 120
-cargo run -p concat-cli -- api '{"method":"catalogue.list","kind":"filter"}'
-cargo run -p concat-cli -- api < edits.jsonl   # one JSON-RPC call per line; see below
-cargo run -p concat-cli -- serve               # the same API on 127.0.0.1:7420
-cargo run -p concat-cli --features grpc -- serve --grpc 127.0.0.1:7421
-cargo run -p concat                    # the editor window, debug
-cargo run --profile quick -p concat    # optimised, rebuilds in seconds: for trying changes
-cargo build --profile app -p concat    # the shipping binary: fat LTO, panic=abort, stripped
+# Desktop editor development build (optimized for quick incremental compilation)
+cargo build --profile quick -p concat --bin framecut
+
+# Production shipping build (fat LTO, stripped)
+cargo build --profile app -p concat --bin framecut
+
+# Run full automated test suite
+cargo test --workspace
 ```
 
-Nothing is spawned at run time: FFmpeg is linked, whisper.cpp and sherpa-onnx
-are compiled in. A build needs the FFmpeg 7+ development libraries (headers
-and import libraries) - `brew install ffmpeg` on macOS, a BtbN `shared` build
-unpacked and pointed at with `FFMPEG_DIR` on Windows and on Linux
-distributions whose packaged FFmpeg is older than 7 - plus cmake and a C++
-toolchain for whisper.cpp. The window draws with Slint's Skia renderer on
-every platform, from prebuilt Skia binaries fetched at build time.
-On Linux, Skia needs the fontconfig and freetype headers at build time (see
-`.github/workflows/build-app.yml` for the package list).
+---
 
-On Nix, the flake at the repository root builds the window with every native
-dependency pinned: `nix build` (then `./result/bin/concat`), `nix run`, or
-`nix develop` for a shell with the toolchain and libraries in it. Linux
-x86_64 and aarch64.
-
-### Phones
-
-The whole engine and the window build for Android (arm64) and iOS
-(arm64). Two native libraries come from source for a phone, because no
-prebuilt covers them: FFmpeg, which `scripts/ffmpeg-mobile.sh` cross-builds
-as static archives with the platform's hardware codecs turned on -
-MediaCodec on Android, VideoToolbox on iOS - and whisper.cpp, which its
-crate builds with cmake for the target. sherpa-onnx ships as the shared
-library k2-fsa publishes, fetched by `scripts/sherpa-mobile.sh`; on Android
-the app carries it in `jniLibs`, on iOS as an embedded framework. Both
-scripts leave their output under `vendor/`, outside `target/`, and
-`scripts/mobile-env.sh` turns that into the build environment:
-
-```sh
-# Android: the NDK under the SDK, a JDK, and cargo-ndk or cargo-apk.
-scripts/ffmpeg-mobile.sh aarch64-linux-android
-scripts/sherpa-mobile.sh aarch64-linux-android
-eval "$(scripts/mobile-env.sh aarch64-linux-android)"
-cargo ndk -t arm64-v8a --platform 26 build -p concat-android   # the activity's .so
-cargo apk build --release -p concat-android                     # the APK, signed with
-                                                                # CARGO_APK_RELEASE_KEYSTORE
-
-# iOS: Xcode.
-scripts/ffmpeg-mobile.sh aarch64-apple-ios
-scripts/sherpa-mobile.sh aarch64-apple-ios
-eval "$(scripts/mobile-env.sh aarch64-apple-ios)"
-cargo build --release -p concat --target aarch64-apple-ios
-scripts/ios-app.sh aarch64-apple-ios release                    # Concat.app
-```
-
-`.github/workflows/mobile.yml` runs exactly this on every pull request
-and on a release tag, and keeps the FFmpeg builds cached. The window is one library: `concat` on the
-desktop and on iOS runs it from `main.rs`, `concat-android` from the
-activity's `android_main`, and `crates/concat/src/platform.rs` is where
-the three differ - how the backend is chosen, how files are picked, and
-whether there is a title strip to drag.
-
-## Driving Concat without the window
-
-The full reference - every method, every edit command, every type, and a
-page per transport - lives on the website at
-[concat.standalones.org/docs](https://concat.standalones.org/docs). What follows
-is the short version.
-
-Everything the window does to a project, a script can do through the Concat
-API: `concat-api` is the one dispatcher, and the transports only carry it.
-On a line - stdin, TCP, a Unix socket - a call is JSON-RPC 2.0, one object
-per line, and the response comes back with the call's id:
-
-```jsonl
-{"jsonrpc":"2.0","id":1,"method":"project.open","params":{"path":"/edits/Reel"}}
-{"jsonrpc":"2.0","id":1,"result":{"project":{...},"canUndo":false,...}}
-{"jsonrpc":"2.0","id":2,"method":"edit.apply","params":{"path":"/edits/Reel","command":{"op":"addTextClip","start":1.5}}}
-{"jsonrpc":"2.0","id":2,"result":{...}}
-{"jsonrpc":"2.0","id":3,"method":"export.run","params":{"path":"/edits/Reel","output":"/edits/reel.mp4"}}
-{"jsonrpc":"2.0","id":3,"result":{"job":"j1","path":"/edits/Reel","output":"/edits/reel.mp4"}}
-{"jsonrpc":"2.0","method":"export.progress","params":{"job":"j1","path":"/edits/Reel","frame":30,"total":900,"stage":"video"}}
-{"jsonrpc":"2.0","method":"export.done","params":{"job":"j1","path":"/edits/Reel","output":"/edits/reel.mp4","width":1920,"height":1080}}
-```
-
-An `edit.apply` carries a `concat-project` command as it is, so every edit
-the window can make is one a caller can make, with the same refusals. An
-error is `{"code": -32001, "message": "...", "data": {"code": "notOpen"}}`:
-the number is JSON-RPC's, the name in `data` is the API's - `parse`,
-`invalid`, `notOpen`, `notFound`, `refused`, `busy`, `cancelled`, `failed`,
-`unauthorized`. Exports are jobs: the response names one at once and its
-events follow, to every connected caller, each naming its job and project.
-
-`concat-cli serve` puts the same lines on a socket. It binds loopback unless
-told otherwise, and every connection, loopback included, presents a token
-as its first line, `{"jsonrpc":"2.0","id":0,"method":"auth","params":{"token":"..."}}`:
-the one given with `--token` (or `CONCAT_API_TOKEN`), or else one minted
-at start and printed under the addresses, so only whoever started the
-server can hand it out. There is no encryption; a bind off loopback belongs
-behind something that has it. With the `grpc` feature the same API is
-served over HTTP/2 from `crates/concat-server/proto/concat.proto`, a thin
-envelope carrying the same JSON, with the token as `authorization: Bearer
-...` metadata. `version` is the call to make first: its reply's
-`capabilities` names what the build serves (`events`, `json-rpc`,
-`unix-socket`, `grpc`, `gpu`) before anything is asked of it.
-
-## Reading this codebase cold
-
-1. The layout table and dependency arrows above - the map of the whole system.
-2. `crates/*/src/lib.rs` - every crate opens with a `//!` block saying what it is for.
-3. `cargo doc --open` - the generated API map of the whole engine.
-
-## Conventions
-
-- **Time is exact.** All timestamps are `concat_core::time::Rational` seconds, never `f64`.
-  Frame-accurate editing and floating point do not mix.
-- **Graphs use handles, not pointers.** `concat_core::arena` explains why.
-- **Shallow generics.** Concrete types until three call sites demand otherwise.
-- **Threads, not async.** The render path is CPU-bound; `async` buys nothing here.
+© 2026 IT AMADERSOMAJ INC. All rights reserved.
