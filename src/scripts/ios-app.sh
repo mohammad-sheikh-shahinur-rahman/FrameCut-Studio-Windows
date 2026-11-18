@@ -27,7 +27,7 @@ app=$workspace/target/$target/$profile/FrameCut Studio.app
 rm -rf "$app"
 mkdir -p "$app"
 cp "$binary" "$app/FrameCut Studio"
-cp "$root/assets/icons/concat_logo_512.png" "$app/AppIcon.png" 2>/dev/null || true
+cp "$root/assets/icons/framecut_logo_512.png" "$app/AppIcon.png" 2>/dev/null || true
 
 platform=iPhoneOS
 [ "$target" = aarch64-apple-ios-sim ] && platform=iPhoneSimulator

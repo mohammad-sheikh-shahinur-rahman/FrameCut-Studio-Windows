@@ -46,8 +46,8 @@ DisableProgramGroupPage=yes
 LicenseFile=..\..\LICENSE
 OutputDir={#Out}
 OutputBaseFilename=FrameCut-Studio-{#Version}-windows-{#Suffix}-setup
-SetupIconFile=..\icons\concat.ico
-UninstallDisplayIcon={app}\concat.ico
+SetupIconFile=..\icons\framecut.ico
+UninstallDisplayIcon={app}\framecut.ico
 UninstallDisplayName=FrameCut Studio
 Compression=lzma2/max
 SolidCompression=yes
@@ -105,14 +105,14 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#Stage}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\icons\concat.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\icons\framecut.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{autoprograms}\FrameCut Studio"; Filename: "{app}\concat.exe"; IconFilename: "{app}\concat.ico"
+Name: "{autoprograms}\FrameCut Studio"; Filename: "{app}\framecut.exe"; IconFilename: "{app}\framecut.ico"
 ; The way in when a graphics driver draws the window as coloured squares:
 ; it turns off Settings > General > Draw on the GPU, which that window hides.
-Name: "{autoprograms}\FrameCut Studio (safe graphics)"; Filename: "{app}\concat.exe"; Parameters: "--software"; IconFilename: "{app}\concat.ico"
-Name: "{autodesktop}\FrameCut Studio"; Filename: "{app}\concat.exe"; IconFilename: "{app}\concat.ico"; Tasks: desktopicon
+Name: "{autoprograms}\FrameCut Studio (safe graphics)"; Filename: "{app}\framecut.exe"; Parameters: "--software"; IconFilename: "{app}\framecut.ico"
+Name: "{autodesktop}\FrameCut Studio"; Filename: "{app}\framecut.exe"; IconFilename: "{app}\framecut.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\concat.exe"; Description: "{cm:LaunchProgram,FrameCut Studio}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\framecut.exe"; Description: "{cm:LaunchProgram,FrameCut Studio}"; Flags: nowait postinstall skipifsilent

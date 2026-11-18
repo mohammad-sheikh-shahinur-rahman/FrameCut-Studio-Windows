@@ -48,6 +48,14 @@ desktop.ini
 
 # Local environment
 .env
+
+# Build and downloaded dependency artifacts
+/ffdl/
+/ffmpeg-win.zip
+/llvm.exe
+/onnxruntime-*
+/dist/
+
 .env.local
 
 # An FFmpeg development build unpacked locally for the linked engine
