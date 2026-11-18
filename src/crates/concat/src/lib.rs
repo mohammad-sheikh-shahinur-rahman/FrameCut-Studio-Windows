@@ -964,6 +964,9 @@ fn start(project: Option<std::path::PathBuf>, smoke: Smoke) -> Result<(), slint:
     editor.on_dock_add(on_dock!(|state, kind: PaneKind| {
         add_pane(&mut state, kind);
     }));
+    editor.on_dock_reset(on_dock!(|state| {
+        state.reset_workspace_layout();
+    }));
     // Not on a phone or in the compact dock: there the two seats are the
     // monitor and the timeline, and a third would squeeze both.
     editor.on_key_mark_opened(on_dock!(|state| {
@@ -2641,6 +2644,10 @@ fn start(project: Option<std::path::PathBuf>, smoke: Smoke) -> Result<(), slint:
                             state.split_at(at, true);
                         }
                         "save" => state.save(true),
+                        "reset-layout" => {
+                            state.reset_workspace_layout();
+                            state.publish_dock_remembered(&app, &shell.models);
+                        }
                         _ => {}
                     }
                 }

@@ -2809,6 +2809,14 @@ impl Studio {
                     &keymap::label(&self.prefs, "next-edit"),
                     true,
                 ),
+                rule(),
+                row(
+                    "reset-layout",
+                    t("studio.resetLayout"),
+                    Glyph::Reset,
+                    "",
+                    true,
+                ),
             ],
             _ => Vec::new(),
         }

@@ -20,13 +20,43 @@
 
 ---
 
-## Executive Overview
+## Executive Overview & Master Directive
 
 **FrameCut Studio** (`com.itamadersomajinc.framecut` / `app.framecutstudio.editor`) is a production-grade, 100% local Non-Linear Video Editor (NLE) and finishing architecture for Windows, macOS, Linux, Android (phones, foldables, tablets), and ChromeOS devices. 
 
 Engineered and maintained by **IT AMADERSOMAJ INC.**, FrameCut unifies real-time live preview (ExoPlayer & WGPU/Direct3D 12) and final hardware render (Media3 Transformer + VideoCompositor) through a deterministic **Unified Rendering Graph** (`UnifiedRenderGraph.kt` / `concat-render`) so that every spatial transform, 3D title extrusion, GLSL color shader, and 5-Band Parametric Biquad EQ / AudioFX processor executes consistently in both live preview and final export.
 
 Every subsystem in FrameCut is backed by real mathematical, DSP, OpenGL ES / Vulkan / Direct3D capability probing, 3D camera matrix projection, and hardware codec execution—with **zero mock UI, zero fake placeholders, zero cloud dependencies, and 100% offline reliability**.
+
+### Mandatory 10-Point Acceptance Standard
+Every editing tool, shader, filter, and audio processor in FrameCut adheres to our strict 10-point verification standard:
+1. **Real Native Implementation**: Implemented with zero mock stubs or placeholder buttons.
+2. **Interactive UI Integration**: Connected to live sliders, wheels, curves, and inspector panels.
+3. **Engine Binding**: Directly drives the unified compositor and export pipeline.
+4. **Real-Time Preview**: Frame-accurate, hardware-accelerated playback at 60 fps.
+5. **Exact Export Parity**: Identical mathematical color, transform, and audio output in final render.
+6. **Transaction-Safe Persistence**: Stored atomically in project manifests (`framecut.json`).
+7. **80-Step Undo/Redo**: Full state snapshotting for every parameter and timeline adjustment.
+8. **Automated Verification**: Covered by automated unit and integration test suites.
+9. **Hardware Probing**: Real-time detection of Direct3D 12, NVENC/QSV, DirectML, and CPU instruction sets.
+10. **Graceful Degradation**: Multi-tier software/CPU fallbacks when hardware capabilities are absent.
+
+```mermaid
+graph TD
+    UI["Application Shell<br/>(WinUI 3 / Slint High-DPI Desktop Workspace)"] --> Host["Host & Session Layer<br/>(concat-host · Device Prober & Event Loop)"]
+    Host --> Project["Project & State Engine<br/>(concat-project · 80-Step Undo/Redo & framecut.json)"]
+    Host --> URG["Unified Render Graph (URG)<br/>(concat-render · Frame-Accurate DAG Compositor)"]
+    
+    URG --> GPU["GPU Backend<br/>(Direct3D 12 · WGPU 30 · WGSL/HLSL Shaders)"]
+    URG --> Media["Media I/O & Codecs<br/>(concat-media · FFmpeg LGPL + MediaFoundation)"]
+    URG --> Audio["Audio DSP & Mixer<br/>(concat-speech · 5-Band Parametric EQ & Limiter)"]
+    URG --> Vision["Neural Vision Engine<br/>(concat-vision · ONNX Runtime 1.28.0 + DirectML)"]
+    URG --> Text["3D Typography Engine<br/>(concat-text · 3D Extrusion & Vector Glyphs)"]
+    
+    URG --> Export["Master Export Engine<br/>(concat-export · MP4/HEVC/ProRes/AV1/GIF)"]
+```
+
+See [MASTER_DIRECTIVE.md](file:///J:/FrameCut%20Studio/MASTER_DIRECTIVE.md) for the complete engineering directive and architectural registry.
 
 ---
 

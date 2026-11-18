@@ -243,6 +243,7 @@ export component CaptionsForm inherits VerticalLayout {
                 label: I18n.t("captions.placement");
                 SegmentedControl {
                     options: [I18n.t("common.bottom"), I18n.t("captions.centre"), I18n.t("common.top")];
+                    icons: [Glyph.align-bottom, Glyph.align-center-y, Glyph.align-top];
                     current: root.data.placement;
                     changed(index) => { root.placement-changed(index); }
                 }
@@ -251,7 +252,9 @@ export component CaptionsForm inherits VerticalLayout {
             DialogRow {
                 label: I18n.t("common.size");
                 SegmentedControl {
-                    options: [I18n.t("common.small"), I18n.t("common.medium"), I18n.t("common.large")];
+                    options: root.width < 320px
+                        ? ["S", "M", "L"]
+                        : [I18n.t("common.small"), I18n.t("common.medium"), I18n.t("common.large")];
                     current: root.data.size;
                     changed(index) => { root.size-changed(index); }
                 }

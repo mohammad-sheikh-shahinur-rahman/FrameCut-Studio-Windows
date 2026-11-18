@@ -759,6 +759,7 @@ export component PreviewPane inherits Rectangle {
     /// the monitor is the timeline's.
     in property <string> source-name;
     callback source-closed();
+    callback source-add-to-timeline();
     /// The decoded frame. Drawn fitted to the stage when there is one.
     in property <image> frame;
     /// The frame lets something show through; see `Editor.see-through`.
@@ -1185,7 +1186,32 @@ export component PreviewPane inherits Rectangle {
                         font-size: Theme.fs-sm;
                         vertical-alignment: center;
                         overflow: elide;
-                        max-width: stage.width - 60px;
+                        max-width: stage.width - 90px;
+                    }
+                    VerticalLayout {
+                        alignment: center;
+                        Rectangle {
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 10px;
+                            background: add-touch.has-hover ? Theme.accent : Theme.on-scrim.with-alpha(0.25);
+
+                            Icon {
+                                x: (parent.width - self.width) / 2;
+                                y: (parent.height - self.height) / 2;
+                                glyph: Glyph.plus;
+                                size: 11px;
+                                tint: add-touch.has-hover ? Theme.on-accent : Theme.on-scrim;
+                            }
+                            add-touch := TouchArea {
+                                mouse-cursor: pointer;
+                                clicked => { root.source-add-to-timeline(); }
+                            }
+                            Tip {
+                                text: I18n.t("studio.addAtPlayhead");
+                                active: add-touch.has-hover;
+                            }
+                        }
                     }
                     VerticalLayout {
                         alignment: center;

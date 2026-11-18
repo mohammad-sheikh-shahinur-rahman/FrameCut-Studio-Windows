@@ -77,6 +77,7 @@ component LibraryTab inherits Rectangle {
     // around "Text". A Slint layout distributes spare width on top of each
     // child's own preferred width, which is the same rule.
     horizontal-stretch: 1;
+    min-width: 56px;
     border-radius: Theme.r-sm;
     // The current page is a chip lifted out of the track. Slint has no
     // box-shadow, so the value step carries the lift alone — which is why this
@@ -139,6 +140,11 @@ component LibraryTab inherits Rectangle {
             clicked => {
                 root.clicked();
             }
+        }
+
+        Tip {
+            text: root.label;
+            active: touch.has-hover;
         }
     }
 }
@@ -599,6 +605,31 @@ export component MediaCard inherits Rectangle {
                         glyph: SourcePreview.playing ? Glyph.pause : Glyph.play;
                         size: 12px;
                         tint: Theme.on-scrim;
+                    }
+                }
+
+                // Quick add to timeline button (+) on hover:
+                if card.has-hover: Rectangle {
+                    x: 4px;
+                    y: 4px;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: Theme.r-xs;
+                    background: add-btn.has-hover ? Theme.accent : Theme.scrim;
+
+                    Icon {
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        glyph: Glyph.plus;
+                        size: 11px;
+                        tint: add-btn.has-hover ? Theme.on-accent : Theme.on-scrim;
+                    }
+
+                    add-btn := TouchArea {
+                        mouse-cursor: pointer;
+                        clicked => {
+                            root.activated();
+                        }
                     }
                 }
 
@@ -1940,6 +1971,24 @@ export component MediaPane inherits Rectangle {
                 track := Rectangle {
                     border-radius: Theme.r;
                     clip: true;
+
+                    wheel-area := TouchArea {
+                        x: 0;
+                        y: 0;
+                        width: parent.width;
+                        height: parent.height;
+                        scroll-event(event) => {
+                            if (event.delta-y != 0px) {
+                                strip.content-x = Math.max(root.strip-floor, Math.min(0px, strip.content-x + event.delta-y * 0.8));
+                                return EventResult.accept;
+                            }
+                            if (event.delta-x != 0px) {
+                                strip.content-x = Math.max(root.strip-floor, Math.min(0px, strip.content-x + event.delta-x * 0.8));
+                                return EventResult.accept;
+                            }
+                            return EventResult.reject;
+                        }
+                    }
 
                     // The chips share the track's width while they fit, and
                     // run past its end when they do not: seven pages in a

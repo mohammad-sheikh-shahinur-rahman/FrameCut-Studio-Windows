@@ -421,11 +421,12 @@ export component PaneSwitcher inherits Rectangle {
 // manager places a new window.
 export component AddPaneButton inherits Rectangle {
     callback added(kind: PaneKind);
+    callback reset-layout();
 
-    property <length> menu-w: 168px;
-    /// Five view rows and the surface's padding; held to the room under the
+    property <length> menu-w: 180px;
+    /// Five view rows, divider, reset row and padding; held to the room under the
     /// button the way the seat's own menu is.
-    property <length> list-h: 5 * 26px + 8px;
+    property <length> list-h: 6 * 26px + 9px + 8px;
     property <length> menu-h: Math.min(root.list-h, Math.max(3 * 26px + 8px,
         Panes.room-below(root.absolute-position.y + root.height + 4px)));
 
@@ -500,6 +501,44 @@ export component AddPaneButton inherits Rectangle {
                     SwitchRow {
                         kind: PaneKind.timeline;
                         chosen => { menu.close(); root.added(PaneKind.timeline); }
+                    }
+
+                    SwitchDivider { }
+
+                    Rectangle {
+                        height: 26px;
+                        border-radius: Theme.r-sm;
+                        background: reset-touch.has-hover ? Theme.field-hover : Colors.transparent;
+
+                        HorizontalLayout {
+                            padding-left: 8px;
+                            padding-right: 8px;
+                            spacing: 8px;
+
+                            VerticalLayout {
+                                alignment: center;
+                                Icon {
+                                    glyph: Glyph.reset;
+                                    size: 13px;
+                                    tint: reset-touch.has-hover ? Theme.accent : Theme.fg-muted;
+                                }
+                            }
+
+                            Text {
+                                text: I18n.t("studio.resetLayout");
+                                color: reset-touch.has-hover ? Theme.accent : Theme.fg;
+                                font-size: Theme.fs;
+                                vertical-alignment: center;
+                            }
+                        }
+
+                        reset-touch := TouchArea {
+                            mouse-cursor: pointer;
+                            clicked => {
+                                menu.close();
+                                root.reset-layout();
+                            }
+                        }
                     }
                 }
             }

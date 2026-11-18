@@ -222,6 +222,11 @@ export component Seat inherits Rectangle {
                 }
             }
             source-closed => { SourcePreview.closed(); }
+            source-add-to-timeline => {
+                if (SourcePreview.row >= 0) {
+                    Editor.media-activate(SourcePreview.row);
+                }
+            }
             ratio-changed(index) => { Editor.ratio-changed(index); }
             quality-changed(index) => { Editor.quality-changed(index); }
             stage-pressed(x, y, additive) => {

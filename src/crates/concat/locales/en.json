@@ -887,6 +887,7 @@
   "studio.removeBackground": "Remove background: {0}",
   "studio.removeBackgroundSkipped": "FrameCut Studio closed while removing a background, so that clip's cutout is skipped and the project opens. Turn the cutout off and on again to retry.",
   "studio.retiredEffects": "This project uses effects this version no longer has: {0}. They stay in its clips, marked not installed.",
+  "studio.resetLayout": "Reset Workspace Layout",
   "studio.reverse": "Reverse: {0}",
   "studio.reverseAlreadyWorkOne": "Reverse is already at work; one clip at a time",
   "studio.reversedClipNowShows": "Reversed; the clip now shows the copy",

@@ -771,6 +771,7 @@ export component App inherits Window {
                 close => { root.titlebar-close(); }
                 open-settings => { root.open-settings(); }
                 add-pane(kind) => { Editor.dock-add(kind); }
+                reset-layout => { Editor.dock-reset(); }
                 export-clicked => { root.export-clicked(); }
             }
 

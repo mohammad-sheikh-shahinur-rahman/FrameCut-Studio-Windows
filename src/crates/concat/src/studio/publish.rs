@@ -141,6 +141,17 @@ impl Studio {
         }
     }
 
+    /// Resets the workspace docking to the default 4-quadrant layout.
+    pub fn reset_workspace_layout(&mut self) {
+        self.dock = crate::dock::default_dock();
+        self.dock_aside = crate::dock::compact_dock();
+        if let Some(layout) = self.prefs.layout.as_mut() {
+            layout.wide = Some(self.dock.to_saved());
+            layout.compact = Some(self.dock_aside.to_saved());
+        }
+        self.prefs.save(&self.host.dirs);
+    }
+
     /// The window is a phone's: the lanes keep the playhead at their middle
     /// and glide under it. See `platform::phone` and `TimelinePane::centred`.
     pub fn set_phone(&mut self, phone: bool) {

@@ -221,6 +221,7 @@ impl Studio {
         };
         if let Some(id) = created {
             self.selection = vec![id];
+            self.close_source();
         }
     }
 
@@ -278,6 +279,7 @@ impl Studio {
         };
         if let Some(id) = created {
             self.selection = vec![id];
+            self.close_source();
         }
     }
 
