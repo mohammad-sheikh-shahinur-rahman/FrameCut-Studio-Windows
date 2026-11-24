@@ -20,11 +20,11 @@ mod windows {
     pub fn embed_resources() {
         let mut res = winresource::WindowsResource::new();
         res.set_icon("../../assets/app-icon/filmcraft.ico")
-            .set("ProductName", "FilmCraft")
-            .set("FileDescription", "FilmCraft video editor")
-            .set("LegalCopyright", "Copyright (c) the FilmCraft contributors. MIT OR Apache-2.0.")
-            .set("OriginalFilename", "filmcraft.exe")
-            .set("InternalName", "filmcraft");
+            .set("ProductName", "FrameCut Studio")
+            .set("FileDescription", "FrameCut Studio Professional Video Editor")
+            .set("LegalCopyright", "Copyright (c) IT AMADERSOMAJ INC. MIT OR Apache-2.0.")
+            .set("OriginalFilename", "framecut.exe")
+            .set("InternalName", "framecut");
         if let Err(e) = res.compile() {
             if std::env::var_os("FILMCRAFT_REQUIRE_WINRES").is_some() {
                 panic!("embedding Windows resources failed: {e}");
