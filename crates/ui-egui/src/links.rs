@@ -5,8 +5,8 @@
 /// The app's short name, used in the website and repository URLs.
 pub const APP: &str = "framecut";
 
-/// The community Discord.
-pub const DISCORD: &str = "https://discord.gg/artcraft";
+/// The FrameCut Studio community link.
+pub const DISCORD: &str = "https://github.com/mohammad-sheikh-shahinur-rahman/FrameCut-Studio-Windows";
 /// The FrameCut Studio website.
 pub const WEBSITE: &str = "https://github.com/mohammad-sheikh-shahinur-rahman/FrameCut-Studio-Windows";
 /// FrameCut Studio's page on the repository.
@@ -18,7 +18,7 @@ pub const ISSUES: &str = "https://github.com/mohammad-sheikh-shahinur-rahman/Fra
 
 /// (command id, label, url) for every link, in menu order.
 pub const ALL: [(&str, &str, &str); 5] = [
-    ("help.discord", "Join the Community Discord…", DISCORD),
+    ("help.discord", "FrameCut Studio Community", WEBSITE),
     ("help.website", "FrameCut Studio Project", WEBSITE),
     ("help.appPage", "FrameCut Studio on GitHub", APP_PAGE),
     ("help.github", "FrameCut Studio Source Code", GITHUB),
@@ -126,10 +126,8 @@ mod tests {
 
     #[test]
     fn urls_follow_the_artcraft_scheme() {
-        assert_eq!(APP_PAGE, format!("{WEBSITE}/apps/{APP}"));
-        assert_eq!(GITHUB, format!("https://github.com/storytold/{APP}"));
         assert!(ALL.iter().all(|(id, _, u)| id.starts_with("help.") && u.starts_with("https://")));
-        assert_eq!(url_for("help.discord"), Some(DISCORD));
+        assert_eq!(url_for("help.website"), Some(WEBSITE));
         assert_eq!(url_for("help.nope"), None);
     }
 

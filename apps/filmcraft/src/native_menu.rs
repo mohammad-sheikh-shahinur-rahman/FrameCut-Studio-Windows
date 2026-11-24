@@ -45,9 +45,9 @@ pub fn install(app: &FilmcraftApp, ctx: egui::Context) -> (Receiver<String>, Men
     let mut native: Vec<(Item, MenuItem)> = Vec::new();
     let mut titles: Vec<(String, Submenu)> = Vec::new();
     let bar = Menu::new();
-    let app_menu = Submenu::new("FilmCraft", true);
+    let app_menu = Submenu::new("FrameCut Studio", true);
     let [settings_label, hide_label, hide_others_label, quit_label] = NATIVE_APP_MENU;
-    // FilmCraft ▸ Settings ▸ <category> (Premiere's app-menu layout; General is Cmd+,)
+    // FrameCut Studio ▸ Settings ▸ <category> (Premiere's app-menu layout; General is Cmd+,)
     let settings = Submenu::new(app.ui.language.tr(settings_label), true);
     titles.push((settings_label.into(), settings.clone()));
     for it in items.iter().filter(|i| i.id.starts_with("app.settings.")) {
@@ -56,15 +56,11 @@ pub fn install(app: &FilmcraftApp, ctx: egui::Context) -> (Receiver<String>, Men
         native.push((it.clone(), mi.clone()));
         let _ = settings.append(&mi);
     }
-    // About and Discord repeat Help menu commands: same translated labels, updated with them
+    // About repeats Help menu command: same translated label, updated with it
     let label = |id: &str, english: &str| items.iter().find(|i| i.id == id).map_or_else(|| english.to_string(), |i| i.label.clone());
-    let about = MenuItem::with_id("app.about", label("app.about", "About FilmCraft"), true, None);
-    let discord = MenuItem::with_id("help.discord", label("help.discord", "Join the ArtCraft Discord…"), true, None);
-    for (id, mi) in [("app.about", &about), ("help.discord", &discord)] {
-        if let Some(it) = items.iter().find(|i| i.id == id) {
-            // recorded as built (enabled, no shortcut), so the first update applies the real state
-            native.push((Item { enabled: true, shortcut: None, ..it.clone() }, mi.clone()));
-        }
+    let about = MenuItem::with_id("app.about", label("app.about", "About FrameCut Studio"), true, None);
+    if let Some(it) = items.iter().find(|i| i.id == "app.about") {
+        native.push((Item { enabled: true, shortcut: None, ..it.clone() }, about.clone()));
     }
     // the predefined items keep their native actions; our text lets them follow the language
     let predefined = [
@@ -78,7 +74,6 @@ pub fn install(app: &FilmcraftApp, ctx: egui::Context) -> (Receiver<String>, Men
     let quit = MenuItem::with_id(quit_id, app.ui.language.tr(quit_label), true, quit_accel);
     let _ = app_menu.append_items(&[
         &about,
-        &discord,
         &PredefinedMenuItem::separator(),
         &settings,
         &PredefinedMenuItem::separator(),
