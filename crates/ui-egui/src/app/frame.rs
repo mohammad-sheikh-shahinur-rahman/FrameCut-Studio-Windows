@@ -59,7 +59,7 @@ impl FilmcraftApp {
             ui.ctx().set_cursor_icon(egui::CursorIcon::None);
             return;
         }
-        let header_h = if self.ui.show_header { header::HEIGHT } else { 0.0 };
+        let header_h = if self.ui.show_header { header::height(self) } else { 0.0 };
         let header = egui::Rect::from_min_size(full.min, egui::vec2(full.width(), header_h));
         if self.ui.show_header {
             header::show(self, ui, header);

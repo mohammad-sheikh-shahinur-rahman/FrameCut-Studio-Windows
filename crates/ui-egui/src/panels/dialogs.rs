@@ -498,9 +498,14 @@ fn about_tab(app: &mut FilmcraftApp, ui: &mut egui::Ui) {
             links::open(app, ui.ctx(), url);
         }
     };
-    link(ui, "website", Icon::Globe, "FrameCut Studio Project", links::WEBSITE, true);
+    link(ui, "discord", Icon::Globe, tl!("FrameCut Studio Community"), links::DISCORD, true);
     ui.add_space(6.0);
+    link(ui, "website", Icon::Globe, "FrameCut Studio Project", links::WEBSITE, false);
+    ui.add_space(4.0);
+    link(ui, "appPage", Icon::Globe, "FrameCut Studio Documentation", links::APP_PAGE, false);
+    ui.add_space(4.0);
     link(ui, "github", Icon::Code, tl!("Source code on GitHub"), links::GITHUB, false);
+    ui.add_space(4.0);
     link(ui, "reportIssue", Icon::Code, tl!("Report an issue"), links::ISSUES, false);
     ui.add_space(10.0);
     ui.label(egui::RichText::new(tl!("MIT OR Apache-2.0. Fonts: Inter, Noto Serif and JetBrains Mono (SIL OFL 1.1).")).small().color(t.text_dim));

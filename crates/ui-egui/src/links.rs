@@ -18,10 +18,10 @@ pub const ISSUES: &str = "https://github.com/mohammad-sheikh-shahinur-rahman/Fra
 
 /// (command id, label, url) for every link, in menu order.
 pub const ALL: [(&str, &str, &str); 5] = [
-    ("help.discord", "FrameCut Studio Community", WEBSITE),
-    ("help.website", "FrameCut Studio Project", WEBSITE),
-    ("help.appPage", "FrameCut Studio on GitHub", APP_PAGE),
-    ("help.github", "FrameCut Studio Source Code", GITHUB),
+    ("help.discord", "FrameCut Studio Community…", DISCORD),
+    ("help.website", "FrameCut Studio Website", WEBSITE),
+    ("help.appPage", "FrameCut Studio Documentation", APP_PAGE),
+    ("help.github", "FrameCut Studio on GitHub", GITHUB),
     ("help.reportIssue", "Report an Issue…", ISSUES),
 ];
 

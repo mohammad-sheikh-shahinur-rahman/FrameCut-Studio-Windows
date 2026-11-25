@@ -325,6 +325,8 @@ fn app_creator(launch: Launch, graphics: graphics::GraphicsStart, created: Arc<A
         cc.egui_ctx.on_end_pass(
             "graphics-start",
             Arc::new(move |ui| {
+                #[cfg(target_os = "windows")]
+                filmcraft_platform::cursor::set_window_dark_theme();
                 if ui.ctx().cumulative_frame_nr() >= 2 && !confirmed.swap(true, Ordering::Relaxed) {
                     graphics.confirm();
                 }

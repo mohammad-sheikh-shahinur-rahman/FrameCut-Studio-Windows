@@ -510,11 +510,11 @@ fn workspace_root(name: &str) -> Node<PanelKind> {
         "All Panels" => vsplit(
             Ratio(0.5),
             hsplit(
-                Ratio(0.5),
-                tabs(&[Source, EffectControls, AudioClipMixer, Metadata, LumetriScopes, Text], 0),
-                hsplit(Ratio(0.6), tabs(&[Program], 0), tabs(&[LumetriColor, EssentialGraphics, EssentialSound, TextToSpeech, Properties, AudioTrackMixer], 0)),
+                Ratio(0.45),
+                tabs(&[Source, EffectControls, Metadata, Text], 0),
+                hsplit(Ratio(0.50), tabs(&[Program], 0), tabs(&[LumetriColor, EssentialSound, Properties], 0)),
             ),
-            hsplit(Ratio(0.26), tabs(&[Project, MediaBrowser, Libraries, Info, Effects, Markers, History], 0), bottom_editing()),
+            hsplit(Ratio(0.30), tabs(&[Project, MediaBrowser, Effects, Info], 0), bottom_editing()),
         ),
         // Editing (default), Learning, Review — Premiere 26 factory layout:
         // top: Source group | Program | Properties; bottom: Project group | Tools | Timeline | Meters.
@@ -525,7 +525,7 @@ fn workspace_root(name: &str) -> Node<PanelKind> {
                 hsplit(Ratio(0.5), tabs(&[Source, EffectControls, AudioClipMixer, Metadata], 0), tabs(&[Program], 0)),
                 tabs(&[Properties, EssentialGraphics, Text], 0),
             ),
-            hsplit(Ratio(0.29), tabs(&[Project, MediaBrowser, Libraries, Info, Effects, Markers, History], 0), bottom_editing()),
+            hsplit(Ratio(0.30), tabs(&[Project, MediaBrowser, Effects, Info], 0), bottom_editing()),
         ),
     }
 }

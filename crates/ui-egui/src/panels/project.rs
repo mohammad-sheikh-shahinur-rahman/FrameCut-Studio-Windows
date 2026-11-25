@@ -406,20 +406,22 @@ fn body(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect, v: &View, actions
         Inst::Main => root_id,
         Inst::Tab(k) => BinId(app.ui.project_panel.tabs[k].bin),
     };
-    let up = Rect::from_min_size(pos2(head.min.x, head.center().y - 11.0), vec2(24.0, 22.0));
-    let up_resp = ui.interact(up, egui::Id::unique((&pre, "up")), Sense::click()).on_hover_text(tl!("Up one level"));
-    app.auto.add(&format!("{pre}.up"), up, "Up one level");
     let can_up = v.bin != top;
-    // a bordered button while there is a level to go up to, so it reads as clickable
-    if can_up {
+    let crumb_x = if can_up {
+        let up = Rect::from_min_size(pos2(head.min.x, head.center().y - 11.0), vec2(24.0, 22.0));
+        let up_resp = ui.interact(up, egui::Id::unique((&pre, "up")), Sense::click()).on_hover_text(tl!("Up one level"));
+        app.auto.add(&format!("{pre}.up"), up, "Up one level");
         ui.painter().rect_filled(up, 3.0, if up_resp.hovered() { t.hover } else { t.field_bg });
         ui.painter().rect_stroke(up, 3.0, Stroke::new(1.0, t.field_border), egui::StrokeKind::Inside);
-    }
-    icons::paint(ui.painter(), Rect::from_center_size(up.center(), vec2(14.0, 14.0)), Icon::ArrowUp, if can_up { t.text } else { t.text_faint });
-    if up_resp.clicked() && can_up {
-        let parent = parent_bin(&app.session.project.root, v.bin);
-        navigate(app, v.inst, parent.map(|b| b.0));
-    }
+        icons::paint(ui.painter(), Rect::from_center_size(up.center(), vec2(14.0, 14.0)), Icon::ArrowUp, t.text);
+        if up_resp.clicked() {
+            let parent = parent_bin(&app.session.project.root, v.bin);
+            navigate(app, v.inst, parent.map(|b| b.0));
+        }
+        up.max.x + 8.0
+    } else {
+        head.min.x
+    };
     let mut crumb = format!("{}.fcproj", app.session.project.name);
     for b in bin_path(&app.session.project.root, v.bin) {
         crumb.push_str(" / ");
@@ -427,7 +429,11 @@ fn body(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect, v: &View, actions
     }
     let fs = font(app);
     let cr = ui.painter().with_clip_rect(head);
-    cr.text(pos2(up.max.x + 8.0, head.center().y), Align2::LEFT_CENTER, &crumb, Tokens::ui(fs - 0.5), t.text_dim);
+    let mut cjob = egui::text::LayoutJob::simple_singleline(crumb.clone(), Tokens::ui(fs - 0.5), t.text_dim);
+    cjob.wrap.max_width = (head.max.x - crumb_x).max(20.0);
+    cjob.wrap.max_rows = 1;
+    let cg = cr.layout_job(cjob);
+    cr.galley(pos2(crumb_x, head.center().y - cg.size().y / 2.0), cg, t.text_dim);
     app.auto.add(&format!("{pre}.breadcrumb"), head, &crumb);
 
     // search row: field, Find, item count

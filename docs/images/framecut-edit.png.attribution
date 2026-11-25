@@ -1,0 +1,7 @@
+asset:        framecut-edit.png
+title:        FrameCut Studio Main Editing Workspace
+author:       IT AMADERSOMAJ INC. / FrameCut Studio contributors
+source:       original work (screenshot of FrameCut Studio captured via wgpu offscreen render)
+license:      MIT OR Apache-2.0
+added:        2026-11-25
+notes:        Editing workspace with 2-row Premiere-style menu bar, Program monitor, Project panel, Tools palette, multi-track Timeline with demo sequence, and Audio Meters.

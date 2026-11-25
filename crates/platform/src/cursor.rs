@@ -26,3 +26,49 @@ pub fn cursor_screen_position() -> Option<(i32, i32)> {
 pub fn cursor_screen_position() -> Option<(i32, i32)> {
     None
 }
+
+/// Apply dark title bar theme to our Windows window via DwmSetWindowAttribute.
+/// Sets immersive dark mode and dark caption color (#181818) so the native title bar matches
+/// the professional NLE dark UI.
+#[cfg(target_os = "windows")]
+#[allow(unsafe_code)]
+pub fn set_window_dark_theme() {
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::System::LibraryLoader::{GetProcAddress, LoadLibraryA};
+    use windows::Win32::UI::WindowsAndMessaging::FindWindowW;
+    use windows::core::{s, w};
+
+    // SAFETY: Dynamic loading of dwmapi.dll to call DwmSetWindowAttribute on our own window.
+    unsafe {
+        let Ok(hwnd) = FindWindowW(None, w!("FrameCut Studio")) else {
+            return;
+        };
+
+        if let Ok(dwm) = LoadLibraryA(s!("dwmapi.dll")) {
+            if let Some(proc) = GetProcAddress(dwm, s!("DwmSetWindowAttribute")) {
+                type DwmSetWindowAttributeFn = unsafe extern "system" fn(HWND, u32, *const std::ffi::c_void, u32) -> i32;
+                let set_attr: DwmSetWindowAttributeFn = std::mem::transmute(proc);
+
+                // DWMWA_USE_IMMERSIVE_DARK_MODE = 20 (Win11 / Win10 20H1+), 19 on older Win10
+                let dark: i32 = 1;
+                let _ = set_attr(hwnd, 20, &dark as *const _ as *const _, 4);
+                let _ = set_attr(hwnd, 19, &dark as *const _ as *const _, 4);
+
+                // DWMWA_CAPTION_COLOR = 35 (Win11 22000+) -> #181818 (BGR: 0x00181818)
+                let caption_color: u32 = 0x00181818;
+                let _ = set_attr(hwnd, 35, &caption_color as *const _ as *const _, 4);
+
+                // DWMWA_TEXT_COLOR = 36 (Win11 22000+) -> #E0E0E0 (BGR: 0x00E0E0E0)
+                let text_color: u32 = 0x00E0E0E0;
+                let _ = set_attr(hwnd, 36, &text_color as *const _ as *const _, 4);
+
+                // DWMWA_BORDER_COLOR = 34 (Win11 22000+) -> #282828 (BGR: 0x00282828)
+                let border_color: u32 = 0x00282828;
+                let _ = set_attr(hwnd, 34, &border_color as *const _ as *const _, 4);
+            }
+        }
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn set_window_dark_theme() {}

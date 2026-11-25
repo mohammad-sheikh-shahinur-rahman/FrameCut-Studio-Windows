@@ -1,0 +1,7 @@
+asset:        framecut-home.png
+title:        FrameCut Studio Home & Media Ingest Dashboard
+author:       IT AMADERSOMAJ INC. / FrameCut Studio contributors
+source:       original work (screenshot of FrameCut Studio captured via wgpu offscreen render)
+license:      MIT OR Apache-2.0
+added:        2026-11-25
+notes:        Premiere-style Home/Import dashboard with navigation sidebar, quick-start templates, recent projects, and hardware status badge.

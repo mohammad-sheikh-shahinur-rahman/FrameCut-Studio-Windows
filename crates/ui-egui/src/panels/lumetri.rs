@@ -53,9 +53,8 @@ pub fn show(app: &mut FilmcraftApp, ui: &mut egui::Ui, rect: Rect) {
         bui.add_space(6.0);
         bui.label(egui::RichText::new("Professional Color Grading is ready for this clip.").color(t.text_dim));
         bui.add_space(12.0);
-        let enable_btn = egui::Button::new(
-            egui::RichText::new(tl!("✨ Enable Color Grading")).strong().color(Color32::BLACK)
-        ).fill(t.accent).min_size(vec2(180.0, 32.0));
+        let enable_btn =
+            egui::Button::new(egui::RichText::new(tl!("✨ Enable Color Grading")).strong().color(Color32::BLACK)).fill(t.accent).min_size(vec2(180.0, 32.0));
         if bui.add(enable_btn).clicked() {
             let _ = app.session.execute("effects.apply", json!({"clips": [clip.0], "effect": "lumetri"}));
         }

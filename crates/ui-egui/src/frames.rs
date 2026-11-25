@@ -509,7 +509,7 @@ impl FrameServer {
         let shared = Arc::new(Shared {
             queue: Mutex::new(VecDeque::new()),
             cv: Condvar::new(),
-            done: Mutex::new(Cache { map: HashMap::new(), bytes: 0, budget: 768 << 20, clock: 0 }),
+            done: Mutex::new(Cache { map: HashMap::new(), bytes: 0, budget: 384 << 20, clock: 0 }),
             plans: Mutex::new(PlanCache::default()),
             in_flight: Mutex::new(Vec::new()),
             profiling: AtomicBool::new(false),
@@ -537,7 +537,7 @@ impl FrameServer {
 
     /// The default number of frame workers for this machine.
     pub fn default_workers() -> usize {
-        std::thread::available_parallelism().map(|n| n.get().clamp(2, 6)).unwrap_or(3)
+        std::thread::available_parallelism().map(|n| n.get().saturating_sub(1).clamp(1, 4)).unwrap_or(2)
     }
 
     pub fn set_context(&self, ctx: &egui::Context) {

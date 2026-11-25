@@ -13,6 +13,25 @@
 
 ---
 
+## Visual Tour & Workspaces
+
+### Editing Workspace (Multi-Track Timeline, Program Monitor & Audio Meters)
+![FrameCut Studio Editing Workspace](docs/images/framecut-edit.png)
+
+### Home & Media Ingest Dashboard
+![FrameCut Studio Home Dashboard](docs/images/framecut-home.png)
+
+<details>
+<summary>More Screenshots: Color Grading, Video Scopes & Export</summary>
+
+| Color Grading (3-Way Wheels & Curves) | Real-Time Video Scopes | Hardware Export Suite |
+|---|---|---|
+| ![Color Grading](docs/images/filmcraft-color.png) | ![Video Scopes](docs/images/filmcraft-scopes.png) | ![Export Suite](docs/images/filmcraft-export.png) |
+
+</details>
+
+---
+
 ## 1. Executive Summary & Core Mission
 
 **FrameCut Studio** is a production-grade, 100% local, high-performance Non-Linear Video Editing Studio (NLE) engineered natively for Windows (and cross-platform desktops). Built from clean-room architecture in pure Rust, modern Direct3D 12 / Vulkan / Metal GPU shaders via WGPU, and hardware-accelerated media decoders/encoders, FrameCut Studio unifies live preview, multi-track timeline editing, professional 3-way color grading, audio DSP mixing, and final hardware export through a deterministic Unified Rendering Pipeline.
@@ -120,13 +139,16 @@ cargo build --profile quick -p filmcraft --bin framecut
 cargo run --profile quick -p filmcraft --bin framecut
 ```
 
-### Production Release Build
+### Production Release Build & Windows Installer
 ```powershell
 # Compile optimized native Windows binary
 cargo build --release -p filmcraft --bin framecut
 
 # The compiled executable is generated at:
 # target/release/framecut.exe
+
+# Package Windows MSI Installer & Portable ZIP (requires WiX v5)
+pwsh packaging/windows/package.ps1 -Arch x64
 ```
 
 ---
